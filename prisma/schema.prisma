@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model bahanbaku {
+  idBah      String      @id
+  NamaBahan  String
+  JenisBahan String
+  QtyBah     Int
+  Pemasok    String
+  transaksi  transaksi[]
+}
+
+model gaji {
+  idGaji   Int      @id @default(autoincrement())
+  idKry    String
+  Absensi  Int
+  Tanggal  DateTime
+  Gaji     Int?
+  karyawan karyawan @relation(fields: [idKry], references: [idKry], map: "Gaji_idKry_fkey")
+
+  @@index([idKry], map: "Gaji_idKry_fkey")
+}
+
+model karyawan {
+  idKry                                      String      @id
+  NamaKry                                    String
+  Alamat                                     String
+  Kontak                                     String
+  GajiPerhari                                Int
+  gaji                                       gaji[]
+  transaksi_karyawanTotransaksi_idKry        transaksi[] @relation("karyawanTotransaksi_idKry")
+  transaksi_karyawanTotransaksi_idPenanggung transaksi[] @relation("karyawanTotransaksi_idPenanggung")
+}
+
+model klien {
+  idKli     String      @id
+  NamaKlien String
+  Kontak    String
+  CP        String
+  Alamat    String
+  NPWP      String      @db.Text
+  po        po[]
+  transaksi transaksi[]
+}
+
+model po {
+  idPO      String   @id
+  idBar     String
+  QtyPO     Int
+  HargaSatu Int
+  idKli     String
+  Tanggal   DateTime @db.Date
+  proyek    proyek   @relation(fields: [idBar], references: [idBar], map: "Po_idBar_fkey")
+  klien     klien    @relation(fields: [idKli], references: [idKli], map: "Po_idKli_fkey")
+
+  @@index([idBar], map: "Po_idBar_fkey")
+  @@index([idKli], map: "Po_idKli_fkey")
+}
+
+model proyek {
+  idBar      String      @id
+  NamaProyek String
+  QtyBar     Int
+  po         po[]
+  transaksi  transaksi[]
+}
+
+model transaksi {
+  idTra                 String     @id
+  TipeTransaksi         String
+  idProyek              String?
+  idBahan               String?
+  QtyIt                 Int
+  idKry                 String
+  HargaSatu             Int
+  PersenPajak           Int
+  idPenanggung          String?
+  idPembeli             String?
+  bahanbaku             bahanbaku? @relation(fields: [idBahan], references: [idBah], map: "Transaksi_idBahan_fkey")
+  karyawan_idKry        karyawan   @relation("karyawanTotransaksi_idKry", fields: [idKry], references: [idKry], map: "Transaksi_idKry_fkey")
+  klien                 klien?     @relation(fields: [idPembeli], references: [idKli], map: "Transaksi_idPembeli_fkey")
+  karyawan_idPenanggung karyawan?  @relation("karyawanTotransaksi_idPenanggung", fields: [idPenanggung], references: [idKry], map: "Transaksi_idPenanggung_fkey")
+  proyek                proyek?    @relation(fields: [idProyek], references: [idBar], map: "Transaksi_idProyek_fkey")
+
+  @@index([idBahan], map: "Transaksi_idBahan_fkey")
+  @@index([idKry], map: "Transaksi_idKry_fkey")
+  @@index([idPembeli], map: "Transaksi_idPembeli_fkey")
+  @@index([idPenanggung], map: "Transaksi_idPenanggung_fkey")
+  @@index([idProyek], map: "Transaksi_idProyek_fkey")
+}

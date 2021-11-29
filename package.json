@@ -1,0 +1,26 @@
+{
+  "name": "fullstack-prisma",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.5.0",
+    "install": "^0.13.0",
+    "next": "12.0.4",
+    "npm": "^8.1.4",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.0",
+    "eslint": "7.32.0",
+    "eslint-config-next": "12.0.4",
+    "postcss": "^8.4.1",
+    "prisma": "^3.5.0",
+    "tailwindcss": "^2.2.19"
+  }
+}
