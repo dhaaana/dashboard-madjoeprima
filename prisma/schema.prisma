@@ -20,11 +20,10 @@ model gaji {
   idGaji   Int      @id @default(autoincrement())
   idKry    String
   Absensi  Int
-  Tanggal  DateTime
+  Tanggal  DateTime @db.Date
   Gaji     Int?
-  karyawan karyawan @relation(fields: [idKry], references: [idKry], map: "Gaji_idKry_fkey")
+  karyawan karyawan @relation(fields: [idKry], references: [idKry])
 
-  @@index([idKry], map: "Gaji_idKry_fkey")
 }
 
 model karyawan {
@@ -44,7 +43,7 @@ model klien {
   Kontak    String
   CP        String
   Alamat    String
-  NPWP      String      @db.Text
+  NPWP      String
   po        po[]
   transaksi transaksi[]
 }
@@ -56,11 +55,9 @@ model po {
   HargaSatu Int
   idKli     String
   Tanggal   DateTime @db.Date
-  proyek    proyek   @relation(fields: [idBar], references: [idBar], map: "Po_idBar_fkey")
-  klien     klien    @relation(fields: [idKli], references: [idKli], map: "Po_idKli_fkey")
+  proyek    proyek   @relation(fields: [idBar], references: [idBar])
+  klien     klien    @relation(fields: [idKli], references: [idKli])
 
-  @@index([idBar], map: "Po_idBar_fkey")
-  @@index([idKli], map: "Po_idKli_fkey")
 }
 
 model proyek {
@@ -82,15 +79,11 @@ model transaksi {
   PersenPajak           Int
   idPenanggung          String?
   idPembeli             String?
-  bahanbaku             bahanbaku? @relation(fields: [idBahan], references: [idBah], map: "Transaksi_idBahan_fkey")
-  karyawan_idKry        karyawan   @relation("karyawanTotransaksi_idKry", fields: [idKry], references: [idKry], map: "Transaksi_idKry_fkey")
-  klien                 klien?     @relation(fields: [idPembeli], references: [idKli], map: "Transaksi_idPembeli_fkey")
-  karyawan_idPenanggung karyawan?  @relation("karyawanTotransaksi_idPenanggung", fields: [idPenanggung], references: [idKry], map: "Transaksi_idPenanggung_fkey")
-  proyek                proyek?    @relation(fields: [idProyek], references: [idBar], map: "Transaksi_idProyek_fkey")
+  bahanbaku             bahanbaku? @relation(fields: [idBahan], references: [idBah], onDelete: Restrict)
+  karyawan_idKry        karyawan   @relation("karyawanTotransaksi_idKry", fields: [idKry], references: [idKry])
+  klien                 klien?     @relation(fields: [idPembeli], references: [idKli], onDelete: Restrict)
+  karyawan_idPenanggung karyawan?  @relation("karyawanTotransaksi_idPenanggung", fields: [idPenanggung], references: [idKry], onDelete: Restrict)
+  proyek                proyek?    @relation(fields: [idProyek], references: [idBar], onDelete: Restrict)
 
-  @@index([idBahan], map: "Transaksi_idBahan_fkey")
-  @@index([idKry], map: "Transaksi_idKry_fkey")
-  @@index([idPembeli], map: "Transaksi_idPembeli_fkey")
-  @@index([idPenanggung], map: "Transaksi_idPenanggung_fkey")
-  @@index([idProyek], map: "Transaksi_idProyek_fkey")
+
 }
